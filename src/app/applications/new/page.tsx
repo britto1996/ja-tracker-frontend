@@ -25,7 +25,7 @@ type FormValues = z.infer<typeof schema>;
 export default function NewApplicationPage() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const selected = useSelector((s: RootState) => s.applications.selected);
+  const { createApplicationSuccess } = useSelector((s: RootState) => s.applications);
   // use react-hook-form for resume field; no separate state needed
   const [generating, setGenerating] = useState(false);
   const creating = useSelector((s: RootState) => s.applications.loading);
@@ -65,6 +65,10 @@ export default function NewApplicationPage() {
     }
   }
 
+  const routeBack = () => {
+    router.replace(`/`);
+  }
+
   const onSubmit = async (values: FormValues) => {
     const payload = {
       company: values.company,
@@ -74,14 +78,14 @@ export default function NewApplicationPage() {
       deadline: new Date(values.deadline).toISOString(),
     } as any;
     dispatch(applicationsActions.createApplication.request(payload));
+    
   };
 
   useEffect(() => {
-    // After successful creation, redirect to application list
-    if (selected?.id) {
-      router.replace(`/`);
+    if (createApplicationSuccess) {
+      routeBack();
     }
-  }, [selected, router]);
+  }, [createApplicationSuccess]);
 
   const values = watch();
   const isSubmitDisabled = useMemo(() => {

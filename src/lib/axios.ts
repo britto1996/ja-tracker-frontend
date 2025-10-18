@@ -4,7 +4,7 @@ import { Application, CoverLetter, ApiError } from '@/types';
 // Axios singleton
 export const api = axios.create({
   baseURL: undefined, // we use absolute URLs in ENDPOINTS
-  timeout: 15000,
+  timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

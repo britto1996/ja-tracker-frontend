@@ -6,6 +6,7 @@ export interface ApplicationsState {
   loading: boolean;
   error?: string;
   selected?: Application | null;
+  createApplicationSuccess?: boolean;
 }
 
 const initialState: ApplicationsState = {
@@ -13,6 +14,7 @@ const initialState: ApplicationsState = {
   loading: false,
   error: undefined,
   selected: null,
+  createApplicationSuccess: false,
 };
 
 // Request action creators for sagas
@@ -87,6 +89,7 @@ const applicationsSlice = createSlice({
         state.loading = false;
         state.items.unshift(action.payload);
         state.selected = action.payload;
+        state.createApplicationSuccess = true;
       })
       .addCase(createApplicationFailure, (state, action) => {
         state.loading = false;
