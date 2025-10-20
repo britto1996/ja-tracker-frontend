@@ -65,9 +65,7 @@ export default function NewApplicationPage() {
     }
   }
 
-  const routeBack = () => {
-    router.replace(`/`);
-  }
+  // Navigate back to home after successful creation
 
   const onSubmit = async (values: FormValues) => {
     const payload = {
@@ -83,9 +81,9 @@ export default function NewApplicationPage() {
 
   useEffect(() => {
     if (createApplicationSuccess) {
-      routeBack();
+      router.replace(`/`);
     }
-  }, [createApplicationSuccess]);
+  }, [createApplicationSuccess, router]);
 
   const values = watch();
   const isSubmitDisabled = useMemo(() => {

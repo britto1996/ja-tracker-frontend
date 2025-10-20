@@ -1,0 +1,12 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "pnpm run build",
+  "installCommand": "corepack enable && corepack prepare pnpm@10.18.2 --activate && pnpm install",
+  "functions": {
+    "src/app/api/**/route.js": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  }
+}

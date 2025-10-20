@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// Ensure this route runs on the Node.js runtime on Vercel (not Edge)
+export const runtime = 'nodejs';
+// This API is dynamic by nature
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
