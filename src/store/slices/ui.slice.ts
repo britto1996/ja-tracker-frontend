@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type SortOrder = 'deadline-asc' | 'deadline-desc' | 'status';
+export type SortOrder = 'deadline-asc' | 'deadline-desc' | 'created-desc' | 'created-asc' | 'status';
 
 export interface UIState {
   modalOpen: boolean;
@@ -23,7 +23,7 @@ const initialState: UIState = {
   globalLoading: false,
   filterStatus: [],
   searchQuery: '',
-  sortOrder: 'deadline-asc',
+  sortOrder: 'created-desc',
   reminders: [],
   page: 1,
   pageSize: 10,

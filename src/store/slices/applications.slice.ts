@@ -111,9 +111,11 @@ const applicationsSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(updateStatusRequest, (state, action: PayloadAction<{ id: string; status: ApplicationStatus }>) => {
-        // optimistic update
+        // Only apply optimistic update if the status is actually different
         const app = state.items.find((i: Application) => i.id === action.payload.id);
-        if (app) app.status = action.payload.status;
+        if (app && app.status !== action.payload.status) {
+          app.status = action.payload.status;
+        }
       })
       .addCase(updateStatusSuccess, (state, action: PayloadAction<Application>) => {
         const idx = state.items.findIndex((i: Application) => i.id === action.payload.id);
@@ -121,6 +123,8 @@ const applicationsSlice = createSlice({
       })
       .addCase(updateStatusFailure, (state, action) => {
         state.error = action.payload;
+        // Note: For now, we'll rely on the saga to handle rollback logic
+        // A future improvement could track previous states for rollback
       });
   },
 });

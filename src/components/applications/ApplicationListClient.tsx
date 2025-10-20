@@ -25,8 +25,26 @@ export default function ApplicationListClient({ initialItems }: { initialItems: 
     if (filterStatus.length) {
       arr = arr.filter((a) => filterStatus.includes(a.status));
     }
-    if (sortOrder === 'deadline-asc') arr = [...arr].sort((a, b) => a.deadline.localeCompare(b.deadline));
-    if (sortOrder === 'deadline-desc') arr = [...arr].sort((a, b) => b.deadline.localeCompare(a.deadline));
+    
+    // Sort applications
+    if (sortOrder === 'deadline-asc') {
+      arr = [...arr].sort((a, b) => a.deadline.localeCompare(b.deadline));
+    } else if (sortOrder === 'deadline-desc') {
+      arr = [...arr].sort((a, b) => b.deadline.localeCompare(a.deadline));
+    } else if (sortOrder === 'created-desc') {
+      arr = [...arr].sort((a, b) => {
+        const aCreated = a.createdAt || a.deadline; // fallback to deadline if no createdAt
+        const bCreated = b.createdAt || b.deadline;
+        return bCreated.localeCompare(aCreated);
+      });
+    } else if (sortOrder === 'created-asc') {
+      arr = [...arr].sort((a, b) => {
+        const aCreated = a.createdAt || a.deadline; // fallback to deadline if no createdAt
+        const bCreated = b.createdAt || b.deadline;
+        return aCreated.localeCompare(bCreated);
+      });
+    }
+    
     return arr;
   }, [storeItems, initialItems, filterStatus, sortOrder]);
 

@@ -74,8 +74,27 @@ function* updateStatusWorker(
     yield put(applicationsActions.updateStatus.success(item));
     toast.success('Status updated');
   } catch (err: any) {
-    toast.error(err.message ?? 'Failed to update status');
-    yield put(applicationsActions.updateStatus.failure(err.message ?? 'Network error'));
+    console.error('Status update failed:', err);
+    
+    // Handle specific error cases
+    let errorMessage = 'Failed to update status';
+    
+    if (err.status === 422) {
+      errorMessage = 'Invalid status update. The application may already be in this state.';
+    } else if (err.status === 404) {
+      errorMessage = 'Application not found.';
+    } else if (err.status === 500) {
+      errorMessage = 'Server error. Please try again later.';
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+    
+    // Only show toast for non-422 errors to avoid spam from auto-archiving
+    if (err.status !== 422) {
+      toast.error(errorMessage);
+    }
+    
+    yield put(applicationsActions.updateStatus.failure(errorMessage));
   }
 }
 
