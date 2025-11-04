@@ -13,7 +13,7 @@ const SORT_OPTIONS: { value: SortOrder; label: string }[] = [
 
 export default function ApplicationFilters() {
   const dispatch = useDispatch();
-  const { filterStatus, sortOrder } = useSelector((s: RootState) => s.ui);
+  const { filterStatus, sortOrder, searchQuery } = useSelector((s: RootState) => s.ui);
   const reminders = useSelector((s: RootState) => s.ui.reminders);
   const toggle = (s: string) => {
     const next = filterStatus.includes(s)
@@ -23,6 +23,30 @@ export default function ApplicationFilters() {
   };
   return (
     <div className="space-y-3">
+      <div className="rounded-lg border bg-white p-3">
+        <div className="mb-2 text-sm font-medium">Search</div>
+        <div className="relative">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => dispatch(uiActions.setSearchQuery(e.target.value))}
+            placeholder="Search by company, role, description… e.g. status:interview company:acme"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 pr-8 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          {searchQuery && (
+            <button
+              aria-label="Clear search"
+              onClick={() => dispatch(uiActions.setSearchQuery(''))}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-1 text-xs text-gray-500 hover:text-gray-800"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Tips: Use tokens like <span className="font-mono">status:interview</span>, <span className="font-mono">company:acme</span>, <span className="font-mono">role:engineer</span>.
+        </p>
+      </div>
       <div className="rounded-lg border bg-white p-3">
         <div className="mb-2 text-sm font-medium">Sort By</div>
         <select

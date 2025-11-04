@@ -9,7 +9,7 @@ import { uiActions } from '@/store/slices/ui.slice';
 
 export default function ApplicationListClient({ initialItems }: { initialItems: Application[] }) {
   const dispatch = useDispatch();
-  const { filterStatus, sortOrder, page, pageSize } = useSelector((s: RootState) => s.ui);
+  const { filterStatus, sortOrder, page, pageSize, searchQuery } = useSelector((s: RootState) => s.ui);
   const storeItems = useSelector((s: RootState) => s.applications.items);
   useEffect(() => {
     if (storeItems.length === 0 && initialItems.length > 0) {
@@ -24,6 +24,38 @@ export default function ApplicationListClient({ initialItems }: { initialItems: 
     let arr = Array.from(map.values());
     if (filterStatus.length) {
       arr = arr.filter((a) => filterStatus.includes(a.status));
+    }
+    // Text search with simple token support
+    const q = (searchQuery || '').trim();
+    if (q) {
+      const tokens = q.split(/\s+/);
+      arr = arr.filter((a) => {
+        // base fields
+        const hay = `${a.company} ${a.role} ${a.jobDescription} ${a.status}`.toLowerCase();
+        let include = true;
+        for (const t of tokens) {
+          const [k, ...rest] = t.split(':');
+          const val = rest.join(':');
+          if (rest.length) {
+            // token form key:value
+            const v = val.toLowerCase();
+            if (k === 'status') {
+              if (a.status.toLowerCase() !== v) { include = false; break; }
+            } else if (k === 'company') {
+              if (!a.company.toLowerCase().includes(v)) { include = false; break; }
+            } else if (k === 'role') {
+              if (!a.role.toLowerCase().includes(v)) { include = false; break; }
+            } else {
+              // unknown key -> require presence in haystack
+              if (!hay.includes(t.toLowerCase())) { include = false; break; }
+            }
+          } else {
+            // plain term
+            if (!hay.includes(k.toLowerCase())) { include = false; break; }
+          }
+        }
+        return include;
+      });
     }
     
     // Sort applications
@@ -46,7 +78,7 @@ export default function ApplicationListClient({ initialItems }: { initialItems: 
     }
     
     return arr;
-  }, [storeItems, initialItems, filterStatus, sortOrder]);
+  }, [storeItems, initialItems, filterStatus, sortOrder, searchQuery]);
 
   const total = items.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
